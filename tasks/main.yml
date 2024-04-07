@@ -1,11 +1,16 @@
 ---
-
 - name: Install dependencies
   package:
     name: "{{ item }}"
     state: "present"
   loop: "{{ acme_sh_dependencies }}"
   when: not acme_sh_uninstall
+
+- name: Determine if acme.sh is installed
+  stat:
+    path: "~/.acme.sh/acme.sh"
+  register: is_acme_sh_installed
+  become_user: "{{ acme_sh_become_user }}"
 
 - name: Create git clone path
   file:
@@ -14,7 +19,7 @@
     owner: "{{ acme_sh_become_user }}"
     group: "{{ acme_sh_become_user }}"
     mode: "0755"
-  when: not acme_sh_uninstall
+  when: not acme_sh_uninstall and acme_sh_git_install
 
 - name: Git clone https://github.com/acmesh-official/acme.sh
   git:
@@ -22,10 +27,10 @@
     version: "{{ acme_sh_git_version }}"
     dest: "{{ acme_sh_git_clone_dest }}"
     update: "{{ acme_sh_git_update }}"
-  when: not acme_sh_uninstall
+  when: not acme_sh_uninstall and acme_sh_git_install
   become_user: "{{ acme_sh_become_user }}"
 
-- name: Install acme.sh
+- name: Install acme.sh (from git clone)
   command: >-
     ./acme.sh --install --log
     --days {{ acme_sh_renew_time_in_days }}
@@ -33,7 +38,15 @@
   args:
     chdir: "{{ acme_sh_git_clone_dest }}"
     creates: "~/.acme.sh/acme.sh"
-  when: not acme_sh_uninstall
+  when: not acme_sh_uninstall and acme_sh_git_install
+  become_user: "{{ acme_sh_become_user }}"
+
+- name: Install acme.sh
+  command: >-
+    curl https://get.acme.sh | sh -s {{ "email=" + acme_sh_account_email if acme_sh_account_email else "" }}
+  args:
+    creates: "~/.acme.sh/acme.sh"
+  when: not acme_sh_uninstall and not acme_sh_git_install and not is_acme_sh_installed.stat.exists
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Determine if acme.sh is installed
@@ -61,7 +74,7 @@
     owner: "{{ acme_sh_become_user }}"
     group: "{{ acme_sh_become_user }}"
     mode: "0755"
-  when: not acme_sh_uninstall
+  when: not acme_sh_uninstall and acme_sh_copy_certs_to_path is not directory
 
 - name: Uninstall acme.sh and disable all certificate renewals
   command: ./acme.sh --uninstall
