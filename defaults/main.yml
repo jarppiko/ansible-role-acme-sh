@@ -1,13 +1,13 @@
 ---
-
 acme_sh_become_user: "root"
 
-acme_sh_dependencies: ["cron", "git", "wget"]
+acme_sh_dependencies: ["cron", "git", "wget", "bash", "curl"]
 
 acme_sh_git_url: "https://github.com/acmesh-official/acme.sh"
 acme_sh_git_version: "master"
 acme_sh_git_update: False
 acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
+acme_sh_git_install: False
 
 acme_sh_upgrade: False
 acme_sh_uninstall: False
@@ -35,7 +35,7 @@ acme_sh_default_extra_flags_issue: ""
 acme_sh_default_extra_flags_renew: ""
 acme_sh_default_extra_flags_install_cert: ""
 
-acme_sh_default_install_cert_reloadcmd: "sudo service nginx reload"
+acme_sh_default_install_cert_reloadcmd: ""
 
 acme_sh_default_issue_pre_hook: ""
 acme_sh_default_issue_post_hook: ""

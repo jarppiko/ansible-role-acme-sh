@@ -1,5 +1,4 @@
 ---
-
 galaxy_info:
   role_name: "acme_sh"
   author: "Nick Janetakis"
@@ -12,6 +11,8 @@ galaxy_info:
       versions:
         - "xenial"
         - "bionic"
+        - "jammy"
+        - "mantic"
     - name: "Debian"
       versions:
         - "jessie"
