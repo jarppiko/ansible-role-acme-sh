@@ -1,5 +1,4 @@
 ---
-
 acme_sh_become_user: "root"
 
 acme_sh_dependencies: ["cron", "git", "wget", "bash", "curl"]
@@ -36,7 +35,7 @@ acme_sh_default_extra_flags_issue: ""
 acme_sh_default_extra_flags_renew: ""
 acme_sh_default_extra_flags_install_cert: ""
 
-acme_sh_default_install_cert_reloadcmd: "sudo service nginx reload"
+acme_sh_default_install_cert_reloadcmd: ""
 
 acme_sh_default_issue_pre_hook: ""
 acme_sh_default_issue_post_hook: ""
